@@ -38,6 +38,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             // Keep this stateless: monitors must not create sessions or need CSRF state.
+            Route::get('/livez', [HealthController::class, 'live'])->name('livez');
             Route::get('/healthz', HealthController::class)->name('healthz');
 
             Route::middleware('web')->group(function () {

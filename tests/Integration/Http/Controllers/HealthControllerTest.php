@@ -10,6 +10,15 @@ class HealthControllerTest extends TestCase
     {
         $this->get('/healthz')
             ->assertOk()
-            ->assertExactJson(['status' => 'ok']);
+            ->assertExactJson(['status' => 'ok'])
+            ->assertHeader('cache-control', 'no-store');
+    }
+
+    public function testLivenessEndpointDoesNotNeedStateStores(): void
+    {
+        $this->get('/livez')
+            ->assertOk()
+            ->assertExactJson(['status' => 'ok'])
+            ->assertHeader('cache-control', 'no-store');
     }
 }

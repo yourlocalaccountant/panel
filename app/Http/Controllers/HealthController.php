@@ -10,6 +10,14 @@ use Throwable;
 class HealthController extends Controller
 {
     /**
+     * Return process liveness without depending on external state.
+     */
+    public function live(): JsonResponse
+    {
+        return response()->json(['status' => 'ok'])->header('Cache-Control', 'no-store');
+    }
+
+    /**
      * Return readiness for load balancers and uptime monitors without exposing
      * infrastructure details to an unauthenticated caller.
      */
@@ -17,7 +25,9 @@ class HealthController extends Controller
     {
         $ready = $this->databaseIsReachable() && $this->cacheIsReachable();
 
-        return response()->json(['status' => $ready ? 'ok' : 'unavailable'], $ready ? 200 : 503);
+        return response()
+            ->json(['status' => $ready ? 'ok' : 'unavailable'], $ready ? 200 : 503)
+            ->header('Cache-Control', 'no-store');
     }
 
     private function databaseIsReachable(): bool
